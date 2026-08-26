@@ -1,0 +1,24 @@
+[Unit]
+Description=Leihregal – tägliches Datenbank-Backup
+Documentation=https://github.com/benhartwich/leihregal/blob/main/docs/backup.md
+After=mariadb.service
+Requires=mariadb.service
+OnFailure=leihregal-backup-alert.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/leihregal-db-backup.sh
+User=root
+Nice=10
+IOSchedulingClass=idle
+
+# Der Dienst braucht nur die Datenbank und sein Zielverzeichnis.
+ProtectSystem=strict
+ReadWritePaths=/var/backups/leihregal
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes

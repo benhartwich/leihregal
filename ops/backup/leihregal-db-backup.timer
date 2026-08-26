@@ -1,0 +1,14 @@
+[Unit]
+Description=Leihregal – tägliches Datenbank-Backup (Timer)
+
+[Timer]
+# 03:30 – abseits des Laravel-Schedulers (Fälligkeits-Mails 08:00,
+# Wunsch-Clustering sonntags 02:00).
+OnCalendar=*-*-* 03:30:00
+# Nachholen, falls der Server zum Zeitpunkt aus war.
+Persistent=true
+RandomizedDelaySec=5min
+Unit=leihregal-db-backup.service
+
+[Install]
+WantedBy=timers.target

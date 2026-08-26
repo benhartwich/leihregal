@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Browser">
+            <directory>tests/Browser</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <env name="APP_ENV" value="dusk"/>
+
+        <!--
+            Dieselbe Absicherung wie in phpunit.xml, aus demselben Grund:
+
+            Liegt eine gecachte Config (bootstrap/cache/config.php – nach jedem
+            Deploy der Normalzustand), lädt Laravel sie und ignoriert sowohl
+            diese Werte als auch die .env, die `artisan dusk` einspielt. Die
+            Browsertests liefen dann gegen die Produktionsdatenbank und hätten
+            sie geleert.
+
+            Der Cache-Pfad wird deshalb auf eine Datei gebogen, die es nie
+            gibt. Diese Dateien niemals anlegen.
+        -->
+        <env name="APP_CONFIG_CACHE" value="bootstrap/cache/config.dusk-niemals-anlegen.php"/>
+        <env name="APP_ROUTES_CACHE" value="bootstrap/cache/routes.dusk-niemals-anlegen.php"/>
+
+        <env name="DB_CONNECTION" value="mariadb"/>
+        <env name="DB_DATABASE" value="leihregal_test"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+
+        <!-- Keine echten Aufrufe an externe Dienste aus Browsertests heraus. -->
+        <env name="ANTHROPIC_API_KEY" value=""/>
+        <env name="OPENAI_API_KEY" value=""/>
+        <env name="GOOGLE_BOOKS_API_KEY" value=""/>
+    </php>
+</phpunit>

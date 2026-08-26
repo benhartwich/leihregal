@@ -1,0 +1,20 @@
+[Unit]
+Description=Leihregal – Alarm bei fehlgeschlagenem Datenbank-Backup
+
+[Service]
+Type=oneshot
+User=root
+# Ein Backup, dessen Scheitern niemand bemerkt, ist kein Backup.
+# Geht per lokalem MTA an root – über /etc/aliases an die Administration\n# weiterleiten, sonst liest die Mail niemand.
+ExecStart=/bin/bash -c '\
+    { echo "Das tägliche Datenbank-Backup für Leihregal ist fehlgeschlagen."; \
+      echo; \
+      echo "Server: $(hostname -f)"; \
+      echo "Zeit:   $(date --rfc-3339=seconds)"; \
+      echo; \
+      echo "Letzte Protokollzeilen:"; \
+      journalctl -u leihregal-db-backup.service -n 40 --no-pager --output=short-iso; \
+      echo; \
+      echo "Vorhandene Sicherungen:"; \
+      ls -lh /var/backups/leihregal/daily/ 2>&1; \
+    } | mail -s "[Leihregal] Datenbank-Backup FEHLGESCHLAGEN auf $(hostname -s)" root'

@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+/*
+  Figtree liegt im Projekt unter public/fonts und wird nicht von einem
+  fremden Server geladen. Bei einem sozialpädagogischen Träger ist das kein
+  Detail: Eine Einbindung über Google Fonts überträgt bei jedem Seitenaufruf
+  die IP-Adresse der Nutzenden an einen Dritten.
+
+  Bis hierher war Figtree zwar im Schriftstapel deklariert, aber nirgends
+  geladen – die Anwendung lief faktisch auf Systemschriften.
+*/
+@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/figtree-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+    U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/figtree-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+    U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+@theme {
+  --font-sans:
+    Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  /*
+    Markenfarben. Die Werte sind keine Neuerfindung, sondern das, was die
+    Oberfläche ohnehin schon verwendet – hier nur benannt, damit Marken-
+    elemente (Logo, Icons, Kopfzeilen in Mails und PDFs) nicht auseinander-
+    laufen.
+
+    Die semantischen Akzente bleiben unverändert in Gebrauch:
+      Violett  = KI-Funktionen (Assistent, Einsatz-Assistent)
+      Smaragd  = Kuration
+      Bernstein= Achtung, Fristen
+      Grün     = Erfolg, abholbereit
+      Rot      = Fehler, überfällig
+  */
+  --color-marke:        #2563EB;  /* blue-600  – Grundton, Flächen, Schaltflächen */
+  --color-marke-hell:   #3B82F6;  /* blue-500  – Verlauf hell, Hover */
+  --color-marke-dunkel: #1D4ED8;  /* blue-700  – Verlauf dunkel, aktive Zustände */
+  --color-marke-zart:   #EFF6FF;  /* blue-50   – Hinterlegungen */
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}

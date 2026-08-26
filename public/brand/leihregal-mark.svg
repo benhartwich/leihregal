@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Leihregal">
+  <!--
+    Bildmarke Leihregal.
+
+    Motiv: Buchrücken im Regal, der rechte herausgezogen – das Medium, das
+    gerade jemand braucht. Genau darum geht die Anwendung: aus dem Bestand das
+    Passende herausziehen.
+
+    Bewusst rein geometrisch und ohne Feinheiten: Die Marke muss auch als
+    16-Pixel-Favicon noch lesbar sein. Farben aus dem bestehenden System
+    (Blau #2563EB), keine neue Farbwelt.
+  -->
+  <defs>
+    <linearGradient id="leihregalBlau" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="116" fill="url(#leihregalBlau)"/>
+
+  <!-- Regalboden -->
+  <rect x="112" y="372" width="288" height="26" rx="13" fill="#FFFFFF" opacity="0.55"/>
+
+  <!-- Drei stehende Buchrücken, unterschiedlich hoch -->
+  <rect x="132" y="168" width="58" height="196" rx="16" fill="#FFFFFF" opacity="0.92"/>
+  <rect x="202" y="134" width="58" height="230" rx="16" fill="#FFFFFF"/>
+  <rect x="272" y="184" width="58" height="180" rx="16" fill="#FFFFFF" opacity="0.82"/>
+
+  <!-- Der herausgezogene -->
+  <rect x="342" y="150" width="58" height="214" rx="16" fill="#FFFFFF"
+        transform="rotate(13 371 364)"/>
+</svg>

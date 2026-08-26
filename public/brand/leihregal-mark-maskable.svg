@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Leihregal">
+  <!--
+    Maskierbare Variante für Android-Startbildschirme (`purpose: maskable`).
+
+    Das Betriebssystem beschneidet solche Icons mit einer beliebigen Form –
+    Kreis, Rundquadrat, Tropfen. Sicher sichtbar bleibt nur der innere Kreis
+    mit 80 % Durchmesser. Die Bildmarke ist deshalb auf 66 % verkleinert und
+    zentriert; der Rand ist durchgehend gefüllt, damit beim Beschnitt keine
+    Ecke leer bleibt.
+  -->
+  <defs>
+    <linearGradient id="leihregalBlauMaskable" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#leihregalBlauMaskable)"/>
+
+  <g transform="translate(87 87) scale(0.66)">
+    <rect x="112" y="372" width="288" height="26" rx="13" fill="#FFFFFF" opacity="0.55"/>
+    <rect x="132" y="168" width="58" height="196" rx="16" fill="#FFFFFF" opacity="0.92"/>
+    <rect x="202" y="134" width="58" height="230" rx="16" fill="#FFFFFF"/>
+    <rect x="272" y="184" width="58" height="180" rx="16" fill="#FFFFFF" opacity="0.82"/>
+    <rect x="342" y="150" width="58" height="214" rx="16" fill="#FFFFFF"
+          transform="rotate(13 371 364)"/>
+  </g>
+</svg>

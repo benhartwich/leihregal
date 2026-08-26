@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_STORE" value="array"/>
+        <!--
+            WICHTIG: Tests nutzen RefreshDatabase und leeren die konfigurierte
+            Datenbank vollständig. Niemals auf die Datenbank des laufenden
+            Betriebs zeigen lassen. Die separate Testdatenbank muss existieren
+            und ihr Name auf `_test` enden – darauf besteht tests/TestCase.php:
+              CREATE DATABASE leihregal_test;
+              GRANT ALL ON leihregal_test.* TO 'leihregal'@'localhost';
+            Fehlt sie, brechen die Tests mit einem Verbindungsfehler ab –
+            das ist gewollt und deutlich besser als Datenverlust.
+        -->
+        <env name="DB_CONNECTION" value="mariadb"/>
+        <env name="DB_DATABASE" value="leihregal_test"/>
+        <!--
+            Diese beiden Zeilen sind der eigentliche Schutz.
+
+            Liegt eine gecachte Config (bootstrap/cache/config.php – nach
+            jedem Deploy mit `artisan config:cache` der Normalzustand), lädt
+            Laravel sie und ignoriert JEDEN <env>-Eintrag oben.
+            DB_DATABASE oben wäre wirkungslos und die Tests liefen gegen die
+            Produktionsdatenbank.
+
+            Der Cache-Pfad wird deshalb für Testläufe auf eine Datei gebogen,
+            die es nie gibt. Damit gilt `configurationIsCached() === false`,
+            die Config kommt frisch aus config/*.php plus den Werten hier.
+            Diese Dateien niemals anlegen.
+        -->
+        <env name="APP_CONFIG_CACHE" value="bootstrap/cache/config.testing-niemals-anlegen.php"/>
+        <env name="APP_ROUTES_CACHE" value="bootstrap/cache/routes.testing-niemals-anlegen.php"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="PULSE_ENABLED" value="false"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="TELESCOPE_ENABLED" value="false"/>
+
+        <!-- Keine echten Aufrufe an externe Dienste aus der Testsuite heraus. -->
+        <env name="ANTHROPIC_API_KEY" value=""/>
+        <env name="OPENAI_API_KEY" value=""/>
+        <env name="GOOGLE_BOOKS_API_KEY" value=""/>
+    </php>
+</phpunit>

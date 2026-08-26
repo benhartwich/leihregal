@@ -1,0 +1,27 @@
+# Standortabhängige Werte für ./deploy.sh
+#
+# Kopieren nach deploy.conf und anpassen. deploy.conf ist von der
+# Versionsverwaltung ausgenommen, gehört also nicht ins Repository.
+
+# Besitzer der Projektdateien. composer, npm und artisan laufen im Deploy als
+# root und hinterlassen root-eigene Dateien – der FPM-Pool tut das nicht.
+BESITZER="www-data:www-data"
+
+# PHP-Aufruf. Auf Servern mit mehreren Versionen ausdrücklich benennen,
+# etwa php8.3 – das Projekt verlangt mindestens 8.3.
+PHP="php8.3"
+
+# Pfad zur Composer-PHAR.
+COMPOSER="/usr/local/bin/composer"
+
+# FPM-Dienst, der nach dem Deploy neu geladen wird.
+FPM_DIENST="php8.3-fpm"
+
+# Adresse für die abschließende Funktionsprüfung. Ohne Angabe wird APP_URL
+# aus der .env gelesen.
+# BASIS_URL="https://bibliothek.example.org"
+
+# systemd-Dienst, der vor dem Deploy die Datenbank sichert. Leer lassen, um
+# den Schritt zu überspringen. Einrichtung siehe docs/backup.md.
+BACKUP_DIENST="leihregal-db-backup.service"
+BACKUP_VERZEICHNIS="/var/backups/leihregal/daily"

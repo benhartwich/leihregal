@@ -1,0 +1,32 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "binary_operator_spaces": {
+            "default": "single_space",
+            "operators": { "=>": null, "=": null }
+        },
+        "concat_space": false,
+        "braces_position": false,
+        "control_structure_braces": false,
+        "statement_indentation": false,
+        "single_line_empty_body": false,
+        "blank_line_before_statement": false,
+        "not_operator_with_successor_space": false,
+        "unary_operator_spaces": false,
+        "class_attributes_separation": false,
+        "method_chaining_indentation": false,
+        "single_space_around_construct": false,
+        "function_declaration": false,
+        "class_definition": false,
+        "phpdoc_align": false,
+        "array_indentation": false,
+        "ternary_operator_spaces": false,
+        "no_multiple_statements_per_line": false,
+        "modifier_keywords": false,
+        "new_with_parentheses": false,
+        "single_quote": false,
+        "ordered_traits": false,
+        "fully_qualified_strict_types": false,
+        "single_line_after_imports": false
+    }
+}
