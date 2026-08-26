@@ -56,6 +56,50 @@ laden und letztere über `artisan serve` am Webserver vorbeilaufen.
 
 ---
 
+## Aktualisierungen im Blick behalten
+
+Eine Bibliothek, die Jahre läuft, veraltet leise. Zwei Ebenen decken das ab:
+
+**1. Sicherheitsmeldungen von GitHub** – bereits aktiv, ohne weiteres Zutun.
+Meldet GitHub eine bekannte Lücke in einer Abhängigkeit aus `composer.lock`
+oder `package-lock.json`, erscheint sie unter *Security → Dependabot alerts*
+und geht als Benachrichtigung raus.
+
+**2. Renovate** für die regelmäßigen Aktualisierungen. Die Konfiguration liegt
+als [`renovate.json`](../renovate.json) im Repository, die App muss einmalig
+für das Repository installiert werden:
+
+<https://github.com/apps/renovate>
+
+Danach legt Renovate eine Sammelübersicht als Issue an
+(*Übersicht: anstehende Aktualisierungen*) und öffnet montags früh
+Pull Requests. Die Einstellungen im Überblick:
+
+| | |
+|---|---|
+| Zeitplan | montags vor 6 Uhr, Sicherheitsrelevantes sofort |
+| Wartezeit | 5 Tage nach Erscheinen, bei Hauptversionen 21 Tage |
+| Gruppen | Laravel, Livewire, Frontend-Werkzeuge, Patch-Stände, GitHub-Actions |
+| Automatisch zusammengeführt | nichts – jeder PR wird gelesen |
+| Ausgenommen | die PHP-Mindestversion, weil sie zum Server passen muss |
+
+Die Wartezeit ist Absicht: Zurückgezogene Fassungen fallen so auf, bevor sie
+hier ankommen. Hauptversionen kommen einzeln und ungruppiert, weil sie eine
+Migrationsanleitung brauchen – **Livewire 3 auf 4 hat den Pfad der
+Skript-Auslieferung geändert** und damit den Webserver-Vhost betroffen
+(siehe oben).
+
+Ohne die App laufen die Prüfungen nicht von selbst. Zwischendurch von Hand:
+
+```bash
+composer outdated --direct
+composer audit
+npm outdated
+npm audit
+```
+
+---
+
 ## Rollen
 
 | Rolle | Darf |

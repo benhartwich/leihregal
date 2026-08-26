@@ -1,0 +1,101 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommitsDisabled"
+  ],
+  "timezone": "Europe/Vienna",
+  "schedule": ["before 6am on monday"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "labels": ["abhängigkeiten"],
+  "commitMessageAction": "Aktualisiert",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "auf {{newVersion}}",
+  "dependencyDashboardTitle": "Übersicht: anstehende Aktualisierungen",
+  "dependencyDashboardHeader": "Diese Übersicht listet alle Abhängigkeiten, für die es neuere Fassungen gibt. Sicherheitsrelevantes erscheint sofort und außerhalb des Wochenplans.",
+
+  "vulnerabilityAlerts": {
+    "labels": ["sicherheit"],
+    "schedule": ["at any time"],
+    "minimumReleaseAge": null,
+    "automerge": false
+  },
+  "osvVulnerabilityAlerts": true,
+
+  "minimumReleaseAge": "5 days",
+  "internalChecksFilter": "strict",
+  "rangeStrategy": "bump",
+
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on the first day of the month"]
+  },
+
+  "packageRules": [
+    {
+      "description": "Patch-Stände zusammenfassen. Einzelne PRs dafür sind reines Rauschen.",
+      "matchUpdateTypes": ["patch"],
+      "groupName": "Patch-Aktualisierungen",
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "description": "Das Laravel-Gespann zieht sich gegenseitig mit – gemeinsam aktualisieren, sonst blockieren sich die PRs.",
+      "matchPackageNames": [
+        "laravel/framework",
+        "laravel/tinker",
+        "laravel/breeze",
+        "laravel/dusk",
+        "laravel/pail",
+        "laravel/pint",
+        "laravel/sail",
+        "nunomaduro/collision"
+      ],
+      "groupName": "Laravel"
+    },
+    {
+      "description": "Livewire und Volt gehören zusammen. Achtung bei Hauptversionen: Livewire 4 hat den Pfad seiner Skript-Auslieferung geändert – siehe ops/nginx und ops/apache.",
+      "matchPackageNames": ["livewire/livewire", "livewire/volt"],
+      "groupName": "Livewire"
+    },
+    {
+      "description": "Frontend-Werkzeuge gemeinsam, sie sind aufeinander abgestimmt.",
+      "matchPackageNames": [
+        "vite",
+        "laravel-vite-plugin",
+        "tailwindcss",
+        "@tailwindcss/postcss",
+        "@tailwindcss/forms",
+        "@tailwindcss/typography",
+        "postcss",
+        "autoprefixer"
+      ],
+      "groupName": "Frontend-Werkzeuge"
+    },
+    {
+      "description": "Hauptversionen einzeln und nie automatisch – sie brauchen einen Blick in die Migrationsanleitung.",
+      "matchUpdateTypes": ["major"],
+      "labels": ["abhängigkeiten", "hauptversion"],
+      "minimumReleaseAge": "21 days",
+      "automerge": false
+    },
+    {
+      "description": "PHP-Mindestversion nur nach bewusster Entscheidung: Sie muss zu dem passen, was auf dem Zielserver läuft.",
+      "matchDepNames": ["php"],
+      "enabled": false
+    },
+    {
+      "description": "@zxing hat schon einmal eine Node-Version verlangt, die auf dem Server nicht lief. Nicht gruppieren, damit ein Fehlschlag zuzuordnen ist.",
+      "matchPackageNames": ["@zxing/browser", "@zxing/library"],
+      "groupName": null,
+      "minimumReleaseAge": "14 days"
+    },
+    {
+      "description": "GitHub-Actions gemeinsam und zügig – dort geht selten etwas kaputt.",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub-Actions",
+      "minimumReleaseAge": "3 days"
+    }
+  ]
+}
