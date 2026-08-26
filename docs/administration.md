@@ -24,6 +24,38 @@ Installation ein – es lohnt sich, diese Tabelle beim Aufsetzen auszufüllen.
 
 ---
 
+## Webserver
+
+Vorlagen: [nginx](../ops/nginx/leihregal.conf.example),
+[Apache 2.4](../ops/apache/leihregal.conf.example).
+
+Unter Apache genügt in aller Regel `AllowOverride All` – die mitgelieferte
+`public/.htaccess` reicht alles Nichtvorhandene an `index.php` weiter und
+trifft damit auch die dynamischen Pfade. Unter nginx gibt es kein Gegenstück
+dazu, dort muss die Ausnahme ausdrücklich im Vhost stehen.
+
+**Wenn die Oberfläche sichtbar ist, aber auf nichts reagiert**, ist fast immer
+Livewires JavaScript nicht erreichbar. Prüfen:
+
+```bash
+PFAD=$(php artisan tinker --execute='echo app("livewire")->getUriPrefix();')
+curl -o /dev/null -w '%{http_code}\n' "https://<ihre-domain>${PFAD}/livewire.min.js"
+```
+
+Kommt hier 404, fängt eine Webserver-Regel für `*.js` den Pfad ab. Livewire
+erzeugt diese Datei zur Laufzeit, sie liegt nicht auf der Platte. Die Ausnahme
+im Vhost muss `^~ /livewire` lauten – **ohne** abschliessenden Schrägstrich,
+denn der Pfad heisst `/livewire-<hash>/` und nicht `/livewire/`.
+
+Die Folgen eines 404 an dieser Stelle sind nicht offensichtlich: Formulare
+fallen auf einen nativen Submit zurück, und ein `<form>` ohne `method` ist
+GET – beim Anmeldeformular steht das Passwort danach in der Adresszeile.
+Weder Feature- noch Browsertests bemerken das, weil erstere kein JavaScript
+laden und letztere über `artisan serve` am Webserver vorbeilaufen.
+`./deploy.sh` prüft es deshalb bei jedem Lauf mit.
+
+---
+
 ## Rollen
 
 | Rolle | Darf |

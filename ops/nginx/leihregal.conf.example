@@ -1,0 +1,103 @@
+# nginx-Vhost für Leihregal.
+#
+# Kopieren nach /etc/nginx/sites-available/<ihre-domain>.conf, die Platzhalter
+# ersetzen und mit einem Symlink in sites-enabled aktivieren. TLS-Zeilen
+# schreibt Certbot beim Ausstellen des Zertifikats selbst hinein.
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name bibliothek.example.org;
+
+    # Certbot ergänzt hier die Weiterleitung auf HTTPS.
+    location /.well-known/acme-challenge/ { root /var/www/html; }
+    location / { return 301 https://$host$request_uri; }
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+    server_name bibliothek.example.org;
+
+    # WICHTIG: Dokumentenwurzel ist public/, niemals das Projektverzeichnis.
+    root /var/www/leihregal/public;
+    index index.php;
+
+    charset utf-8;
+
+    # Cover-Uploads
+    client_max_body_size 10M;
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Livewire – diese Ausnahme ist Pflicht, und der fehlende Schrägstrich
+    # am Ende ist Absicht.
+    #
+    # Livewire liefert sein JavaScript nicht von der Platte, sondern über
+    # PHP – unter einem Pfad der Form /livewire-<hash>/livewire.min.js.
+    # Der Hash leitet sich aus dem APP_KEY ab und ist deshalb in jeder
+    # Installation ein anderer.
+    #
+    # Ohne diese Ausnahme greift weiter unten die Regel, die *.js statisch
+    # ausliefert. Sie findet die Datei nicht und antwortet mit 404. Die
+    # Folgen sind unangenehm und nicht offensichtlich:
+    #
+    #   - Die Oberfläche wird angezeigt, reagiert aber auf nichts.
+    #   - Jedes `wire:submit`-Formular fällt auf einen nativen Submit
+    #     zurück. Ein <form> ohne method ist GET – beim Anmeldeformular
+    #     steht das Passwort danach in der Adresszeile.
+    #
+    # `^~` sorgt dafür, dass dieser Präfix-Treffer die Regex-Regeln unten
+    # ausschaltet. Ein abschliessendes "/livewire/" würde NICHT passen.
+    # ─────────────────────────────────────────────────────────────────────
+    location ^~ /livewire {
+        try_files $uri /index.php?$query_string;
+
+        location ~ \.php$ {
+            fastcgi_pass unix:/var/run/php/php8.3-fpm-leihregal.sock;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+            include fastcgi_params;
+            fastcgi_read_timeout 90;
+        }
+    }
+
+    # Das Web-App-Manifest wird ebenfalls von PHP erzeugt, damit es Name und
+    # Farben aus der Konfiguration zieht. Ohne diese Zeile läge es nicht auf
+    # der Platte und die Web-App wäre nicht installierbar.
+    location = /manifest.webmanifest {
+        try_files $uri /index.php?$query_string;
+    }
+
+    # Laravel
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.3-fpm-leihregal.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+        # KI-Aufrufe dürfen dauern – Bestandsanalyse und Assistent.
+        fastcgi_read_timeout 120;
+    }
+
+    # Versteckte Dateien, aber ACME-Challenge zulassen.
+    location ~ /\.(?!well-known) {
+        deny all;
+    }
+
+    # Statische Dateien direkt ausliefern. Diese Regel ist der Grund für die
+    # Livewire-Ausnahme oben – sie beantwortet alles, was sie nicht auf der
+    # Platte findet, mit 404 statt es an PHP weiterzureichen.
+    location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        try_files $uri =404;
+        expires 30d;
+        access_log off;
+        add_header Cache-Control "public";
+    }
+
+    access_log /var/log/nginx/leihregal-access.log;
+    error_log  /var/log/nginx/leihregal-error.log;
+}

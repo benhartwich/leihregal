@@ -195,6 +195,24 @@ Konten für die drei Rollen und zwanzig Medien quer durch alle Medienarten.
 php artisan db:seed --class=BeispieldatenSeeder
 ```
 
+### Webserver
+
+Kommentierte Vorlagen liegen bei – für
+[nginx](ops/nginx/leihregal.conf.example) und für
+[Apache 2.4](ops/apache/leihregal.conf.example).
+
+> **Eine Stolperstelle, die sich nicht von selbst zeigt:** Livewire liefert
+> sein JavaScript über PHP aus, unter einem Pfad der Form
+> `/livewire-<hash>/livewire.min.js` – der Hash leitet sich aus dem `APP_KEY`
+> ab. Fängt eine Webserver-Regel `*.js` statisch ab, findet sie diese Datei
+> nicht und antwortet mit 404. Die Oberfläche erscheint dann normal, reagiert
+> aber auf nichts, und **jedes Formular fällt auf einen nativen GET-Submit
+> zurück – beim Anmeldeformular landet das Passwort in der Adresszeile.**
+> Die Vorlage enthält die nötige Ausnahme; `./deploy.sh` prüft bei jedem Lauf,
+> dass das Skript wirklich ausgeliefert wird.
+
+### Geplante Aufgaben
+
 Zuletzt braucht der Server einen Minutentakt für die geplanten Aufgaben –
 Fristerinnerungen, Quartalsbericht, Wunsch-Bündelung:
 

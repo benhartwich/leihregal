@@ -1,0 +1,95 @@
+# Apache-2.4-Vhost für Leihregal.
+#
+# Kopieren nach /etc/apache2/sites-available/leihregal.conf, die Platzhalter
+# ersetzen, dann:
+#
+#   a2enmod rewrite proxy_fcgi setenvif headers expires
+#   a2enconf php8.3-fpm          # oder: a2enmod php8.3
+#   a2ensite leihregal
+#   apache2ctl configtest && systemctl reload apache2
+#
+# TLS-Zeilen schreibt Certbot beim Ausstellen des Zertifikats selbst hinein
+# (certbot --apache).
+
+<VirtualHost *:80>
+    ServerName bibliothek.example.org
+    Redirect permanent / https://bibliothek.example.org/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName bibliothek.example.org
+
+    # WICHTIG: Dokumentenwurzel ist public/, niemals das Projektverzeichnis.
+    # Sonst sind .env, storage/ und vendor/ über das Netz erreichbar.
+    DocumentRoot /var/www/leihregal/public
+
+    <Directory /var/www/leihregal/public>
+        # AllowOverride All lässt die mitgelieferte public/.htaccess wirken,
+        # die Laravels Front-Controller-Regeln enthält.
+        AllowOverride All
+        Require all granted
+        Options -Indexes +FollowSymLinks
+    </Directory>
+
+    # Cover-Uploads
+    LimitRequestBody 10485760
+
+    # ─────────────────────────────────────────────────────────────────────
+    # PHP über FPM.
+    #
+    # Der Reihenfolge wegen zuerst: SetHandler greift nur für Dateien, die
+    # tatsächlich existieren – dynamische Pfade wie der von Livewire laufen
+    # ohnehin über die Rewrite-Regeln in public/.htaccess auf index.php.
+    # ─────────────────────────────────────────────────────────────────────
+    <FilesMatch \.php$>
+        SetHandler "proxy:unix:/var/run/php/php8.3-fpm-leihregal.sock|fcgi://localhost"
+    </FilesMatch>
+
+    # KI-Aufrufe dürfen dauern – Bestandsanalyse und Assistent.
+    <IfModule mod_proxy_fcgi.c>
+        ProxyTimeout 120
+    </IfModule>
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Zwischenspeicherung statischer Dateien.
+    #
+    # ACHTUNG, hier liegt die Falle: Zwei Pfade dieser Anwendung SEHEN aus
+    # wie statische Dateien, werden aber von PHP erzeugt und liegen nicht
+    # auf der Platte:
+    #
+    #   /livewire-<hash>/livewire.min.js   Livewires JavaScript. Der Hash
+    #                                      leitet sich aus dem APP_KEY ab
+    #                                      und ist je Installation anders.
+    #   /manifest.webmanifest              Web-App-Manifest, zieht Name und
+    #                                      Farben aus der Konfiguration.
+    #
+    # Unter Apache mit AllowOverride All ist das unkritisch, weil
+    # public/.htaccess alles Nichtvorhandene an index.php weiterreicht.
+    # Wer die Regeln stattdessen hierher zieht oder eigene Alias-, Rewrite-
+    # oder Cache-Regeln für *.js ergänzt, muss diese beiden Pfade
+    # ausnehmen. Andernfalls kommt für livewire.min.js ein 404 zurück –
+    # die Oberfläche erscheint dann normal, reagiert aber auf nichts, und
+    # jedes Formular fällt auf einen nativen GET-Submit zurück. Beim
+    # Anmeldeformular steht das Passwort danach in der Adresszeile.
+    #
+    # Deshalb wird hier ausdrücklich NUR nach existierenden Dateien
+    # gefiltert (-f), nicht nach der Endung.
+    # ─────────────────────────────────────────────────────────────────────
+    <IfModule mod_expires.c>
+        ExpiresActive On
+        <FilesMatch "\.(css|js|jpe?g|png|gif|ico|svg|woff2?|ttf|eot)$">
+            <If "-f %{REQUEST_FILENAME}">
+                ExpiresDefault "access plus 30 days"
+                Header set Cache-Control "public"
+            </If>
+        </FilesMatch>
+    </IfModule>
+
+    # Versteckte Dateien sperren, ACME-Challenge zulassen.
+    <DirectoryMatch "/\.(?!well-known)">
+        Require all denied
+    </DirectoryMatch>
+
+    ErrorLog  ${APACHE_LOG_DIR}/leihregal-error.log
+    CustomLog ${APACHE_LOG_DIR}/leihregal-access.log combined
+</VirtualHost>

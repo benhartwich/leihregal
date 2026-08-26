@@ -165,11 +165,45 @@ LOGIN=$(curl  -sk -o /dev/null -w '%{http_code}' "$BASIS_URL/login"   || echo "0
 echo "/healthz  HTTP $GESUND"
 echo "/login    HTTP $LOGIN"
 
+# Livewires JavaScript, über denselben Weg wie ein Browser.
+#
+# Das ist kein Luxus: Ohne dieses Skript bleibt die Oberfläche zwar sichtbar,
+# aber tot. Jedes `wire:submit`-Formular fällt dann auf einen nativen
+# GET-Submit zurück – beim Anmeldeformular landet dabei das Passwort in der
+# URL, und niemand kommt hinein. Zwei Eigenheiten machen das leicht
+# übersehbar:
+#
+#   1. Der Pfad lautet /livewire-<hash>/ und leitet sich aus dem APP_KEY ab.
+#      Er ist pro Installation verschieden. Eine nginx-Ausnahme, die auf
+#      "/livewire/" endet, greift nicht (siehe docs/installation.md).
+#   2. Die Browsertests laufen über `artisan serve` und sehen den Webserver
+#      gar nicht. Diese Prüfung hier ist die einzige, die es merkt.
+LW_PFAD=$($PHP artisan tinker --execute='echo app("livewire")->getUriPrefix();' 2>/dev/null | tr -d "\r\n")
+if [ -n "$LW_PFAD" ]; then
+    LW=$(curl -sk -o /dev/null -w '%{http_code}' "${BASIS_URL}${LW_PFAD}/livewire.min.js" || echo "000")
+    echo "${LW_PFAD}/livewire.min.js  HTTP $LW"
+else
+    LW="übersprungen"
+    echo "Livewire-Skript: Pfad nicht ermittelbar, Prüfung übersprungen"
+fi
+
 if [ "$GESUND" != "200" ] || [ "$LOGIN" != "200" ]; then
     echo >&2
     echo "FEHLER: Die Seite antwortet nicht wie erwartet." >&2
     echo "Protokoll ansehen:  tail -50 $PROJEKT/storage/logs/laravel.log" >&2
     echo "Notfall-Rückweg:    siehe docs/backup.md (Abschnitt Wiederherstellung)" >&2
+    exit 1
+fi
+
+if [ "$LW" != "200" ] && [ "$LW" != "übersprungen" ]; then
+    echo >&2
+    echo "FEHLER: Livewires JavaScript ist nicht erreichbar (HTTP $LW)." >&2
+    echo "Die Oberfläche wäre sichtbar, aber ohne Funktion – und das" >&2
+    echo "Anmeldeformular würde das Passwort in die URL schreiben." >&2
+    echo >&2
+    echo "Fast immer der Webserver: Eine Regel, die *.js statisch ausliefert," >&2
+    echo "fängt ${LW_PFAD}/livewire.min.js ab. Der Pfad wird von PHP erzeugt" >&2
+    echo "und liegt nicht auf der Platte. Siehe docs/installation.md." >&2
     exit 1
 fi
 
