@@ -10,7 +10,7 @@ für soziale und pädagogische Einrichtungen.**
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-blue.svg)](LICENSE)
 [![PHP 8.3+](https://img.shields.io/badge/PHP-8.3%2B-777BB4.svg)](https://www.php.net/)
 [![Laravel 13](https://img.shields.io/badge/Laravel-13-FF2D20.svg)](https://laravel.com/)
-[![Tests](https://img.shields.io/badge/Tests-172%20grün-brightgreen.svg)](#tests)
+[![Tests](https://github.com/benhartwich/leihregal/actions/workflows/tests.yml/badge.svg)](https://github.com/benhartwich/leihregal/actions/workflows/tests.yml)
 
 </div>
 
