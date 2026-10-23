@@ -20,5 +20,10 @@
     "dependencies": {
         "@zxing/browser": "^0.2.1",
         "@zxing/library": "^0.23.0"
+    },
+    "overrides": {
+        "@tailwindcss/typography": {
+            "postcss-selector-parser": "^7.1.6"
+        }
     }
 }

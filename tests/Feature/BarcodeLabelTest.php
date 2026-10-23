@@ -28,8 +28,12 @@ class BarcodeLabelTest extends TestCase
         $roh  = $response->getContent();
         $text = '';
 
-        if (preg_match_all("/stream\r?\n(.*?)\r?\nendstream/s", $roh, $treffer)) {
-            foreach ($treffer[1] as $stream) {
+        // Streams über ihre /Length ausschneiden, nicht per Regex bis
+        // „endstream": Endete der gepackte Inhalt zufällig auf 0x0D, schnitt
+        // das optionale \r im Muster dieses Byte ab und gzuncompress scheiterte.
+        if (preg_match_all("/\/Length (\d+)\s*>>\s*stream\r?\n/", $roh, $treffer, PREG_OFFSET_CAPTURE)) {
+            foreach ($treffer[0] as $i => [$kopf, $position]) {
+                $stream   = substr($roh, $position + strlen($kopf), (int) $treffer[1][$i][0]);
                 $entpackt = @gzuncompress($stream);
                 if ($entpackt !== false) {
                     $text .= $entpackt;

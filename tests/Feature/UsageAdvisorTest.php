@@ -71,8 +71,15 @@ class UsageAdvisorTest extends TestCase
     {
         Http::fake(fn () => Http::response($this->antwort(), 200));
 
-        $user  = User::factory()->create();
-        $media = Media::factory()->create();
+        $user = User::factory()->create();
+
+        // Die Mediendaten gehen mit in die Anfrage. Ein zufälliger Autor wie
+        // „Michael Huber" liesse die Prüfung unten fehlschlagen, obwohl der
+        // Filter korrekt gearbeitet hat – deshalb fest vorgeben.
+        $media = Media::factory()->create([
+            'title'  => 'Gefühle erkennen',
+            'author' => 'Anna Beispiel',
+        ]);
 
         Volt::actingAs($user)
             ->test('pages.media.show', ['media' => $media])
