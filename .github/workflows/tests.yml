@@ -12,7 +12,7 @@ jobs:
     services:
       mariadb:
         # 11.7 bringt den Spaltentyp VECTOR mit, den die Ähnlichkeitssuche nutzt.
-        image: mariadb:11.7
+        image: mariadb:11.8
         env:
           MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
           MARIADB_DATABASE: leihregal_test
@@ -37,7 +37,7 @@ jobs:
       - name: Node einrichten
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22.23.4'
           cache: npm
 
       # Ohne gebautes Frontend fehlt public/build/manifest.json, und jeder
