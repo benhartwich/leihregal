@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f02fe25f10a2f644b4882031abb5657",
+    "content-hash": "5028cc4a12a28cd6917c4bc5d6bdf283",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -3423,20 +3423,19 @@
         },
         {
             "name": "picqer/php-barcode-generator",
-            "version": "v3.2.4",
+            "version": "v3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/picqer/php-barcode-generator.git",
-                "reference": "16a5cfb74eb8b7a0aa2e60427d98599aa8259380"
+                "reference": "6beada2a30623832ff41b8c7d307c169736b8552"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/picqer/php-barcode-generator/zipball/16a5cfb74eb8b7a0aa2e60427d98599aa8259380",
-                "reference": "16a5cfb74eb8b7a0aa2e60427d98599aa8259380",
+                "url": "https://api.github.com/repos/picqer/php-barcode-generator/zipball/6beada2a30623832ff41b8c7d307c169736b8552",
+                "reference": "6beada2a30623832ff41b8c7d307c169736b8552",
                 "shasum": ""
             },
             "require": {
-                "ext-mbstring": "*",
                 "php": "^8.2"
             },
             "require-dev": {
@@ -3498,9 +3497,10 @@
             ],
             "support": {
                 "issues": "https://github.com/picqer/php-barcode-generator/issues",
-                "source": "https://github.com/picqer/php-barcode-generator/tree/v3.2.4"
+                "source": "https://github.com/picqer/php-barcode-generator/tree/v3.3.0"
             },
-            "time": "2026-01-08T08:57:40+00:00"
+            "time": "2026-08-22T09:50:32+00:00",
+            "published-time": "2026-08-22T09:57:59+00:00"
         },
         {
             "name": "psr/clock",
