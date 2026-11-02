@@ -90,6 +90,13 @@
       "enabled": false
     },
     {
+      "description": "Node und MariaDB in der CI bilden die unterstützten Laufzeiten ab (README: Node 20+, MariaDB 11.7+). Hauptversionen nur bewusst anheben, sonst testet die CI etwas anderes als die Server.",
+      "matchManagers": ["github-actions"],
+      "matchDepNames": ["node", "mariadb"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
       "description": "@zxing hat schon einmal eine Node-Version verlangt, die auf dem Server nicht lief. Nicht gruppieren, damit ein Fehlschlag zuzuordnen ist.",
       "matchPackageNames": ["@zxing/browser", "@zxing/library"],
       "groupName": null,
