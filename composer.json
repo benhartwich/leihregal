@@ -12,8 +12,8 @@
         "chillerlan/php-qrcode": "^6.0.1",
         "laravel/framework": "^13.39.0",
         "laravel/tinker": "^3.0.2",
-        "livewire/livewire": "^4.3",
-        "livewire/volt": "^1.11",
+        "livewire/livewire": "^4.4.8",
+        "livewire/volt": "^1.11.2",
         "minishlink/web-push": "^8.0",
         "picqer/php-barcode-generator": "^3.2"
     },
