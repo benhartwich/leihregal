@@ -90,6 +90,16 @@
       "enabled": false
     },
     {
+      "description": "npm 12 verweigert @tailwindcss/oxide-wasm32-wasi mit EALLOWREMOTE (npm/cli#9800). Erst freigeben, wenn der Fehler behoben ist.",
+      "matchPackageNames": ["npm"],
+      "allowedVersions": "<12"
+    },
+    {
+      "description": "PHPUnit 13 verlangt PHP 8.4. Freigeben, wenn config.platform.php angehoben wird.",
+      "matchPackageNames": ["phpunit/phpunit"],
+      "allowedVersions": "<13"
+    },
+    {
       "description": "@zxing hat schon einmal eine Node-Version verlangt, die auf dem Server nicht lief. Nicht gruppieren, damit ein Fehlschlag zuzuordnen ist.",
       "matchPackageNames": ["@zxing/browser", "@zxing/library"],
       "groupName": null,
