@@ -10,7 +10,7 @@
         "php": "^8.3",
         "barryvdh/laravel-dompdf": "^3.1.2",
         "chillerlan/php-qrcode": "^6.0.1",
-        "laravel/framework": "^13.39.0",
+        "laravel/framework": "^13.40.0",
         "laravel/tinker": "^3.0.2",
         "livewire/livewire": "^4.4.8",
         "livewire/volt": "^1.11.2",
